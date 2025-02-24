@@ -1,5 +1,7 @@
 package com.dreamcastle.server.service.clova;
 
+import com.dreamcastle.server.exception.ClovaApiException;
+import com.dreamcastle.server.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,6 @@ public class SystemPromptFactory {
         return strategies.stream()
                 .filter(strategy -> strategy.getType() == type)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Invalid prompt type: " + type));
+                .orElseThrow(() -> new ClovaApiException(ErrorCode.INVALID_PROMPT_TYPE));
     }
 }

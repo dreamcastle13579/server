@@ -37,7 +37,7 @@ public class DreamService {
             return objectMapper.readValue(
                     response.result().message().content(), InterpretationResponse.class);
         } catch (Exception e) {
-            throw new ClovaApiException(ErrorCode.CLOVA_API_ERROR);
+            throw new ClovaApiException(ErrorCode.CLOVA_API_RESPONSE_PARSING_ERROR);
         }
     }
 }
