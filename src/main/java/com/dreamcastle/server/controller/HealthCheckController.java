@@ -1,5 +1,6 @@
 package com.dreamcastle.server.controller;
 
+import com.dreamcastle.server.dto.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthCheckController {
 
     @GetMapping
-    public String healthCheck() {
-        return "OK";
+    public ApiResponse<String> healthCheck() {
+        return ApiResponse.success("OK");
     }
 }
