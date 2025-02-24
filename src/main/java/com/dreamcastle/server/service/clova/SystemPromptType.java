@@ -8,8 +8,7 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum SystemPromptType {
-    FAIRY("fairy"),
-    RESIDENT("resident");
+    FAIRY("fairy");
 
     private final String type;
     public static SystemPromptType fromString(String value) {

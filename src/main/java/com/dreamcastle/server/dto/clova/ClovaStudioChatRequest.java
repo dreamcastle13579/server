@@ -1,9 +1,9 @@
 package com.dreamcastle.server.dto.clova;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public record ClovaStudioChatRequest(
-        ArrayList<Message> messages,
+        List<Message> messages,
         double topP,
         double temperature,
         int maxTokens,

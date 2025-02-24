@@ -2,6 +2,8 @@ package com.dreamcastle.server.service.dream;
 
 import com.dreamcastle.server.dto.clova.ClovaStudioChatResponse;
 import com.dreamcastle.server.dto.dream.InterpretationResponse;
+import com.dreamcastle.server.exception.ClovaApiException;
+import com.dreamcastle.server.exception.ErrorCode;
 import com.dreamcastle.server.service.clova.ClovaStudioChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class DreamService {
                 .timeout(Duration.ofSeconds(10)) // ⏳ 10초 제한 적용
                 .map(this::parseResponse)
                 .onErrorMap(TimeoutException.class, e ->
-                        new RuntimeException("Clova API timeout exceeded", e));
+                        new ClovaApiException(ErrorCode.CLOVA_API_TIME_OUT_ERROR));
     }
 
     private String formatDreamContent(String nickname, String content) {
@@ -35,7 +37,7 @@ public class DreamService {
             return objectMapper.readValue(
                     response.result().message().content(), InterpretationResponse.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse Clova response", e);
+            throw new ClovaApiException(ErrorCode.CLOVA_API_ERROR);
         }
     }
 }
