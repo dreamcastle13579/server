@@ -20,7 +20,7 @@ public class ClovaStudioChatService {
     private final ClovaProperties clovaProperties;
     private final SystemPromptFactory systemPromptFactory;
 
-    public Mono<ClovaStudioChatResponse> sendRequest(String promptType, String content) {
+    public Mono<String> sendRequest(String promptType, String content) {
 
         SystemPromptType type = SystemPromptType.fromString(promptType);
         SystemPromptStrategy promptStrategy = systemPromptFactory.getStrategy(type);
@@ -35,6 +35,7 @@ public class ClovaStudioChatService {
                 .onStatus(HttpStatusCode::is4xxClientError, response ->
                         Mono.error(new ClovaApiException(ErrorCode.CLOVA_API_INVALID_REQUEST))
                 )
-                .bodyToMono(ClovaStudioChatResponse.class);
+                .bodyToMono(ClovaStudioChatResponse.class)
+                .map(response -> response.result().message().content());
     }
 }
