@@ -72,7 +72,8 @@ jobs:
       - name: Docker build & push
         run: |
           echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_HUB_REPO }} .
+#          docker build -f Dockerfile -t ${{ secrets.DOCKER_HUB_REPO }} .
+          docker build -f Dockerfile --build-arg JAR_FILE=${{ secrets.JAR_FILE }} --build-arg PORT=${{ secrets.DOCKERFILE_PORT }} -t ${{ secrets.DOCKER_HUB_REPO }} .
           docker push ${{ secrets.DOCKER_HUB_REPO }}
 
       - name: Deploy Service
