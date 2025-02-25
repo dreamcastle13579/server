@@ -13,8 +13,8 @@ public record ApiResponse<T>(
         return new ApiResponse<>(200, "API 요청이 성공했습니다.", result);
     }
 
-    public static <T> ApiResponse<T> error() {
-        return new ApiResponse<>(500, "예기치 않은 오류가 발생했습니다.", null);
+    public static <T> ApiResponse<T> error(T errorMessage) {
+        return new ApiResponse<>(500, "예기치 않은 오류가 발생했습니다.", errorMessage);
     }
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode) {
