@@ -1,9 +1,5 @@
 package com.dreamcastle.server.service.dream;
 
-import com.dreamcastle.server.dto.clova.ClovaStudioChatResponse;
-import com.dreamcastle.server.dto.clova.Message;
-import com.dreamcastle.server.dto.clova.Result;
-import com.dreamcastle.server.dto.clova.Role;
 import com.dreamcastle.server.dto.dream.Category;
 import com.dreamcastle.server.dto.dream.InterpretationResponse;
 import com.dreamcastle.server.exception.ClovaApiException;
@@ -19,6 +15,8 @@ import reactor.test.StepVerifier;
 
 import java.time.Duration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,13 +34,15 @@ class DreamServiceTest {
         String nickname = "테스트유저";
         String dreamContent = "어제 꾼 꿈입니다.";
         String formattedContent = nickname + ": " + dreamContent;
-        String clovaResponse = "{\"messages\": [\"해몽 결과\", \"해몽 결과1\"], \"category\" : \"슬픔\"}";
-
-        ClovaStudioChatResponse mockResponse = new ClovaStudioChatResponse(
-                new Result(new Message(Role.assistant, clovaResponse)));
+        String clovaResponse = """
+            {
+                "messages": ["해몽 결과1", "해몽 결과2", "해몽 결과3", "해몽 결과4", "해몽 결과5", "해몽 결과6"],
+                "category": "기쁨"
+            }
+        """;
 
         given(clovaStudioChatService.sendRequest(promptType, formattedContent))
-                .willReturn(Mono.just(mockResponse));
+                .willReturn(Mono.just(clovaResponse));
 
         // When
         Mono<InterpretationResponse> result = dreamService.interpret(promptType, nickname, dreamContent);
@@ -52,16 +52,20 @@ class DreamServiceTest {
                 .expectNextMatches(response -> {
                     // 실제 response 객체의 messages 필드가 예상한 값과 일치하는지 확인
                     return response.messages() != null &&
-                            response.messages().size() == 2 &&
-                            response.messages().get(0).equals("해몽 결과") &&
-                            response.messages().get(1).equals("해몽 결과1") &&
-                            response.category().equals(Category.슬픔);
+                            response.messages().size() == 6 &&
+                            response.messages().get(0).equals("해몽 결과1") &&
+                            response.messages().get(1).equals("해몽 결과2") &&
+                            response.messages().get(2).equals("해몽 결과3") &&
+                            response.messages().get(3).equals("해몽 결과4") &&
+                            response.messages().get(4).equals("해몽 결과5") &&
+                            response.messages().get(5).equals("해몽 결과6") &&
+                            response.category().equals(Category.JOY);
                 })
                 .verifyComplete();
     }
 
     @Test
-    void 해몽시_시간이_정한_limit을_넘기면_실패한다() {
+    void 해몽시_시간이_정한_limit을_넘기면_예외가_발생한다() {
         // Given
         String promptType = "dream";
         String nickname = "테스트유저";
@@ -82,28 +86,90 @@ class DreamServiceTest {
     }
 
     @Test
-    void 잘못된_해몽_결과가_나올시_실패한다() {
+    void 해몽결과가_6개가_아닌_경우_예외가_발생한다() {
         // given
-        String promptType = "dream";
-        String nickname = "테스트유저";
-        String dreamContent = "어제 꾼 꿈입니다.";
-        String formattedContent = nickname + ": " + dreamContent;
-        String clovaResponse = "{\"messages\": [\"해몽 결과\", \"해몽 결과1\"], \"category\" : \"슬픔,\"}";
+        String clovaResponse = """
+            {
+                "messages": ["해몽 결과1", "해몽 결과2", "해몽 결과3", "해몽 결과4", "해몽 결과5"],
+                "category": "기쁨"
+            }
+        """;
+        given(clovaStudioChatService.sendRequest(anyString(), anyString()))
+                .willReturn(Mono.just(clovaResponse));
 
-        ClovaStudioChatResponse mockResponse = new ClovaStudioChatResponse(
-                new Result(new Message(Role.assistant, clovaResponse)));
+        // when & then
+        StepVerifier.create(dreamService.interpret("fairy", "nickname", "dream"))
+                .expectErrorSatisfies(throwable -> {
+                    assertThat(throwable).isInstanceOf(ClovaApiException.class);
+                    // 캐스팅 후 세부 정보 검증
+                    ClovaApiException exception = (ClovaApiException) throwable;
+                    assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.CLOVA_API_INVALID_RESPONSE_MESSAGE);
+                })
+                .verify();
+    }
 
-        given(clovaStudioChatService.sendRequest(promptType, formattedContent))
-                .willReturn(Mono.just(mockResponse));
+    @Test
+    void 해몽결과가_null인_경우_예외가_발생한다() {
+        // given
+        String clovaResponse = """
+            {
+                "category": "기쁨"
+            }
+        """;
+        given(clovaStudioChatService.sendRequest(anyString(), anyString()))
+                .willReturn(Mono.just(clovaResponse));
 
-        // when
-        Mono<InterpretationResponse> result = dreamService.interpret(promptType, nickname, dreamContent);
+        // when & then
+        StepVerifier.create(dreamService.interpret("fairy", "nickname", "dream"))
+                .expectErrorSatisfies(throwable -> {
+                    assertThat(throwable).isInstanceOf(ClovaApiException.class);
+                    // 캐스팅 후 세부 정보 검증
+                    ClovaApiException exception = (ClovaApiException) throwable;
+                    assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.CLOVA_API_INVALID_RESPONSE_MESSAGE);
+                })
+                .verify();
+    }
 
-        // then
-        StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ClovaApiException &&
-                                ((ClovaApiException) throwable).getErrorCode() == ErrorCode.CLOVA_API_ERROR)
+    @Test
+    void 카테고리_결과가_null인_경우_예외가_발생한다() {
+        // given
+        String clovaResponse = """
+            {
+                "messages": ["해몽 결과1", "해몽 결과2", "해몽 결과3", "해몽 결과4", "해몽 결과5", "해몽 결과6"]
+            }
+        """;
+        given(clovaStudioChatService.sendRequest(anyString(), anyString()))
+                .willReturn(Mono.just(clovaResponse));
+
+        // when & then
+        StepVerifier.create(dreamService.interpret("fairy", "nickname", "dream"))
+                .expectErrorSatisfies(throwable -> {
+                    assertThat(throwable).isInstanceOf(ClovaApiException.class);
+                    ClovaApiException exception = (ClovaApiException) throwable;
+                    assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.CLOVA_API_INVALID_RESPONSE_CATEGORY);
+                })
+                .verify();
+    }
+
+    @Test
+    void 카테고리_결과가_없는_카테고리인_경우_예외가_발생한다() {
+        // given
+        String clovaResponse = """
+            {
+                "messages": ["해몽 결과1", "해몽 결과2", "해몽 결과3", "해몽 결과4", "해몽 결과5", "해몽 결과6"],
+                "category": "없는카테고리"
+            }
+        """;
+        given(clovaStudioChatService.sendRequest(anyString(), anyString()))
+                .willReturn(Mono.just(clovaResponse));
+
+        // when & then
+        StepVerifier.create(dreamService.interpret("fairy", "nickname", "dream"))
+                .expectErrorSatisfies(throwable -> {
+                    assertThat(throwable).isInstanceOf(ClovaApiException.class);
+                    ClovaApiException exception = (ClovaApiException) throwable;
+                    assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.CLOVA_API_INVALID_RESPONSE_CATEGORY);
+                })
                 .verify();
     }
 }

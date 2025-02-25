@@ -42,8 +42,8 @@ class DreamControllerTest {
     void 꿈_해몽_API_성공() {
         // given
         InterpretationRequest request = new InterpretationRequest("fairy", "닉네임", "꿈 내용");
-        List<String> messages = List.of("해몽 결과 1", "해몽 결과 2");
-        Category category = Category.기쁨;
+        List<String> messages = List.of("해몽 결과 1", "해몽 결과 2", "해몽 결과 3", "해몽 결과 4", "해몽 결과 5", "해몽 결과 6");
+        Category category = Category.JOY;
 
         InterpretationResponse interpretationResponse = new InterpretationResponse(messages, category);
 
@@ -58,9 +58,13 @@ class DreamControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.result.category").isEqualTo(category.name())
+                .jsonPath("$.result.category").isEqualTo(category.getValue())
                 .jsonPath("$.result.messages[0]").isEqualTo(messages.get(0))
-                .jsonPath("$.result.messages[1]").isEqualTo(messages.get(1));
+                .jsonPath("$.result.messages[1]").isEqualTo(messages.get(1))
+                .jsonPath("$.result.messages[2]").isEqualTo(messages.get(2))
+                .jsonPath("$.result.messages[3]").isEqualTo(messages.get(3))
+                .jsonPath("$.result.messages[4]").isEqualTo(messages.get(4))
+                .jsonPath("$.result.messages[5]").isEqualTo(messages.get(5));
     }
 
     @ParameterizedTest
@@ -90,7 +94,10 @@ class DreamControllerTest {
         return Stream.of(
                 Arguments.of(ErrorCode.CLOVA_API_TIME_OUT_ERROR, HttpStatus.GATEWAY_TIMEOUT),
                 Arguments.of(ErrorCode.CLOVA_API_RESPONSE_PARSING_ERROR, HttpStatus.INTERNAL_SERVER_ERROR),
-                Arguments.of(ErrorCode.CLOVA_API_INVALID_REQUEST, HttpStatus.BAD_REQUEST)
+                Arguments.of(ErrorCode.CLOVA_API_INVALID_REQUEST, HttpStatus.BAD_REQUEST),
+                Arguments.of(ErrorCode.INVALID_PROMPT_TYPE, HttpStatus.BAD_REQUEST),
+                Arguments.of(ErrorCode.CLOVA_API_INVALID_RESPONSE_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR),
+                Arguments.of(ErrorCode.CLOVA_API_INVALID_RESPONSE_CATEGORY, HttpStatus.INTERNAL_SERVER_ERROR)
         );
     }
 }
