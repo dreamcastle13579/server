@@ -1,15 +1,38 @@
-# 드림 캐슬 - 꿈 해몽 서비스
+# 몽글몽글 - 꿈 해몽 서비스
+![image](https://github.com/user-attachments/assets/e0e9d176-d71d-486b-814b-c5a0b28e04cc)
+
+## 🚀 서비스 
+
+### 🔗 링크
+- [서비스 직접 사용 해보기](https://dream-castle.shop/)  
+- [서비스 소개 보러가기](https://ablaze-stargazer-5cd.notion.site/1a8bc20b0a408050ae21dc38027546b4)
+- [비사이드 x 네이버클라우드](https://bside.best/projects/detail/P250219095755)
+
+
+### 프로젝트 소개
 
 
 ### 🧑🏻‍💻 사용 기술
 
 ![Java](https://img.shields.io/badge/-Java%2017-007396?style=plastic&logo=Java&logoColor=white)
 ![SpringBoot](https://img.shields.io/badge/-Spring%20Boot%203.4.3-6DB33F?style=plastic&logo=Spring%20Boot&logoColor=white)
+![JUnit5](https://img.shields.io/badge/-JUnit5-%2325A162?style=plastic&logo=JUnit5&logoColor=white)
 
+### 🧱 인프라
+![GitHub Actions](https://img.shields.io/badge/-Github%20Actions-%232088FF?style=plastic&logo=GithubActions&logoColor=white)
+![Docker](https://img.shields.io/badge/-Docker-%232496ED?style=plastic&logo=Docker&logoColor=white)
 
-[//]: # (![SpringDataJPA]&#40;https://img.shields.io/badge/-Spring%20Data%20JPA%20-6D933F?style=plastic&logo=Spring&logoColor=white&#41;)
+### 📨 협업
+![Notion](https://img.shields.io/badge/Notion-000000?style=plastic&logo=Notion&logoColor=white)
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=plastic&logo=Slack&logoColor=white)
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=plastic&logo=Discord&logoColor=white)
 
-[//]: # (![MySQL]&#40;https://img.shields.io/badge/MySQL%208-4479A1?style=plastic&logo=MySQL&logoColor=white&#41;)
+### ☁️ Naver Cloud Platform
+- [NCP SERVER (VPC)](https://beomsic.tistory.com/entry/NCP%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%B0%B0%ED%8F%AC-1-%EC%84%9C%EB%B2%84)
+- [NCP LoadBalancer](https://beomsic.tistory.com/entry/NCP%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%B0%B0%ED%8F%AC-3-%EB%8F%84%EB%A9%94%EC%9D%B8-%EB%B0%8F-SSL-%EC%A0%81%EC%9A%A9)
+- NCP Global DNS
+- NCP Object Storage
+- [CLOVA STUDIO](https://beomsic.tistory.com/entry/CLOVA-Studio-API-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-%EB%8B%B5%EB%B3%80-%EB%B0%9B%EA%B8%B0)
 
 
 ## 🏃🏻 프로젝트 진행
@@ -20,7 +43,7 @@
 
 ### 📌 사용 기술
 
-### 1️⃣ CLOVA STUDIO
+### 1️⃣ CLOVA STUDIO (플레이그라운드, 튜닝)
 
 사용자가 꿈을 해몽 요청시, 해당 사용자의 꿈 내용과 컨셉에 맞는 해몽된 결과를 다시 사용자에게 전달해주어야 했다.  
 [CLOVA STUDIO](https://www.ncloud.com/product/aiService/clovaStudio)를 이용해 꿈 해몽을 처리하도록 했다.  
