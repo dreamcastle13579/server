@@ -19,7 +19,7 @@ public class DreamService {
     public Mono<InterpretationResponse> interpret(String promptType, String nickname, String dreamContent) {
         String content = formatDreamContent(nickname, dreamContent);
         return clovaStudioChatService.sendRequest(promptType, content)
-                .timeout(Duration.ofSeconds(15)) // ⏳ 15초 제한 적용
+                .timeout(Duration.ofSeconds(20)) // ⏳ 20초 제한 적용
                 .map(InterpretationResponse::parseResponse)
                 .onErrorMap(TimeoutException.class, e ->
                         new ClovaApiException(ErrorCode.CLOVA_API_TIME_OUT_ERROR));
